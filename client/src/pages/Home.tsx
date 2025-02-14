@@ -1,8 +1,11 @@
+import Cards from "../components/Cards"
+import Categories from "../components/Categories"
 
 const Home = () => {
   return (
-    <div >dfvbheyvnvhryrdvyhvoubgvuer
-     <h2>HIGIYIYTFIGYFVGYIV</h2>
+    <div>
+      <Categories />
+      <Cards/>
     </div>
   )
 }
