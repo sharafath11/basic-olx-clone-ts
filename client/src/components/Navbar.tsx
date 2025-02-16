@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Search, Heart, ChevronDown, Menu, X } from "react-feather";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import olx_logo from "../assets/olx_logo.svg";
 import sell_btn from "../assets/sell_btn.svg";
 import olx_plus_btn from "../assets/olx_plus_btn.svg";
+import { AuthContext } from "../context/AuthProvider";
+import { showInfoToast } from "../utils/toastNotifications";
+
+
 
 const Navbar: React.FC = () => {
+  const navigate=useNavigate()
   const [location, setLocation] = useState("India");
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const auth = useContext(AuthContext);
+  const handleSell = () => {
+    if (localStorage.getItem("token")) {
+      navigate("/AddProduct")
+      return
+    }
+    showInfoToast("please login");
+    return
+ }
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm p-2">
@@ -82,17 +96,21 @@ const Navbar: React.FC = () => {
               <Heart className="h-6 w-6" />
             </button>
 
-            <Link to="/login" className="text-sm font-semibold text-gray-800 hover:text-gray-600">
+            {
+              auth?.user ? <button onClick={()=>auth.logoutUser()}>Logout</button> : (
+                <Link to={"/login"}  className="text-sm font-semibold text-gray-800 hover:text-gray-600">
               Login
             </Link>
-            <button className="relative inline-flex items-center border-none bg-transparent">
+              )
+            }
+            <button onClick={handleSell} className="relative inline-flex items-center border-none bg-transparent">
               <div className="relative inline-block">
                 <img
                   src={sell_btn}
                   alt="Sell on OLX"
                   className="w-[80px] sm:w-[90px] md:w-[100px]"
                 />
-                <span className="absolute inset-0 flex justify-center items-center text-white font-bold text-lg">
+                <span className="absolute inset-0 flex justify-center items-center text-white font-bold text-lg" >
                   <img
                     src={olx_plus_btn}
                     alt="Plus icon"
@@ -160,7 +178,7 @@ const Navbar: React.FC = () => {
                 Login
               </Link>
 
-              <button className="relative w-full max-w-[100px] mx-auto">
+              <Link to={"/AddProduct"} className="relative w-full max-w-[100px] mx-auto" onClick={()=>navigate("/AddProduct")}>
   <img
     src={sell_btn}
     alt="Sell on OLX"
@@ -169,7 +187,7 @@ const Navbar: React.FC = () => {
   <span className="absolute inset-0 flex items-center justify-center text-black font-semibold text-lg">
     Sell
   </span>
-</button>
+</Link>
 
 
             </div>
