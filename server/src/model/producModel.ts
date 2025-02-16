@@ -1,11 +1,11 @@
 import mongoose, { Schema, Document, model } from 'mongoose';
 
-interface IProduct extends Document {
-    name: string;
-    category: string;
-    price: number;
-    description: string;
-}
+// interface IProduct extends Document {
+//     name: string;
+//     category: string;
+//     price: number;
+//     description: string;
+// }
 
 const ProductSchema: Schema = new Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

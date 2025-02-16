@@ -10,17 +10,33 @@ export interface AuthContextType {
   user: object | null,
   logoutUser:()=>void
 }
-
 export interface IAddProduct {
   name: string;
   category: string;
   price: number;
   description: string;
-  image: File | string; 
+  image: File | string;
 }
 
 export interface IAddProductContext {
-  addProduct: (arg0: FormData) => Promise<void>; 
-  // addProduct: (name: string, category: string,price: number,description: string,image: File | string, ) => Promise<void>; 
+  addProduct: (data: FormData) => Promise<void>;
+  product: IProduct[] | null;
+}
 
+export interface IProduct {
+  _id: string;
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+  };
+  name: string;
+  category: string;
+  price: number;
+  description: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
