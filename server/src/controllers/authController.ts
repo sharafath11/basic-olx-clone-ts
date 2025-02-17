@@ -2,6 +2,9 @@ import { Request,Response} from "express"
 import userModel from "../model/userModel"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const registerHandler = async (req: Request, res: Response): Promise<void> => {
     const { name, email, password, phoneNumber, address } = req.body;
    console.log("add",address)
@@ -30,9 +33,14 @@ export const loginController = async (req: Request, res: Response): Promise<void
             res.json({ ok: false, msg: "Invalid credentials" });
             return;
         }
+        if (!process.env.JWT_SECRET) {
+            console.error("JWT_SECRET is not defined");
+            res.status(500).json({ ok: false, msg: "Server error: JWT secret missing" });
+            return;
+        }
 
         const token = jwt.sign(
-            { userId: user._id, email: user.email,name:user.name,number:user.phoneNumber },
+            { userId: user._id, email: user.email,name:user.name,number:user.phoneNumber,address:user.address },
             process.env.JWT_SECRET as string,
             { expiresIn: "1h" }
         );

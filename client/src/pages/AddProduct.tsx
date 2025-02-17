@@ -52,7 +52,7 @@ if (fileInput.files && fileInput.files.length > 0) {
     }
 
     try {
-      await productHandler?.addProduct(formDataToSend, true);
+      await productHandler?.addProduct(formDataToSend);
       showSuccessToast("Product added successfully!");
       window.location.reload()
       // setFormData({
