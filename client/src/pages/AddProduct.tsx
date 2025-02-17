@@ -1,6 +1,8 @@
 import { FormEvent, useContext, useState } from "react";
 import { IAddProduct } from "../utils/interfaces";
 import ProductContext from "../context/ProductContext";
+import { validateProductForm } from "../utils/validations/ProductValidation";
+import { showInfoToast, showSuccessToast } from "../utils/toastNotifications";
 
 const AddProduct = () => {
   const productHandler = useContext(ProductContext);
@@ -11,55 +13,104 @@ const AddProduct = () => {
     image: null, 
     price: 0,
   });
-
-  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2IwOWJiMGVhYzg5MGY3OTE1ZjIwMzciLCJlbWFpbCI6ImFiaXNoYXJmYXRoQGdtYWlsLmNvbSIsIm5hbWUiOiJTaGFyZmF0aCBBYmkiLCJudW1iZXIiOiI2MjgyNTYwOTI4IiwiaWF0IjoxNzM5NzEwMzY5LCJleHAiOjE3Mzk3MTM5Njl9.gm9SgxrsJW-qTa-136s804Nko2zONs7dwOk5BivB9qs
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-  
-    if (!formData.image) {
-      alert("Please select an image.");
-      return;
-    }
-  
+    setLoading(true);
+
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("category", formData.category);
     formDataToSend.append("description", formData.description);
     formDataToSend.append("price", formData.price.toString());
     const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-    if (fileInput.files && fileInput.files.length > 0) {
-      formDataToSend.append("image", fileInput.files[0]); 
-    } else {
-      alert("Please select a valid file.");
+if (fileInput.files && fileInput.files.length > 0) {
+  const file = fileInput.files[0];
+  const validImageTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+  if (!validImageTypes.includes(file.type)) {
+    showInfoToast("Please select a valid image file (JPEG, PNG, WEBP, GIF).");
+    setLoading(false);
+    return;
+  }
+
+  formDataToSend.append("image", file);
+} else {
+  showInfoToast("Please select a valid file.");
+  setLoading(false);
+  return;
+}
+
+    if (!validateProductForm(formData)) {
+      setLoading(false);
       return;
     }
-  
-    const response = await productHandler?.addProduct(formDataToSend, true);
-  
-    if (response) {
-      alert("Product added successfully!");
+
+    try {
+      await productHandler?.addProduct(formDataToSend, true);
+      showSuccessToast("Product added successfully!");
+      window.location.reload()
+      // setFormData({
+      //   name: "",
+      //   category: "",
+      //   description: "",
+      //   image: null,
+      //   price: 0,
+      // });
+    } catch (error) {
+      console.error("Error adding product:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="flex flex-col items-center p-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-        <input type="text" id="name" name="name" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" onChange={handleChange} />
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+          onChange={handleChange}
+        />
 
         <label htmlFor="category" className="block mt-4 text-sm font-medium text-gray-700">Category</label>
-        <input name="category" type="text" id="category" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" onChange={handleChange} />
+        <input
+          name="category"
+          type="text"
+          id="category"
+          value={formData.category}
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+          onChange={handleChange}
+        />
 
         <label htmlFor="description" className="block mt-4 text-sm font-medium text-gray-700">Description</label>
-        <input name="description" type="text" id="description" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" onChange={handleChange} />
+        <input
+          name="description"
+          type="text"
+          id="description"
+          value={formData.description}
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+          onChange={handleChange}
+        />
 
         <label htmlFor="price" className="block mt-4 text-sm font-medium text-gray-700">Price</label>
-        <input type="number" name="price" id="price" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" onChange={handleChange} />
+        <input
+          type="number"
+          name="price"
+          id="price"
+          value={formData.price}
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+          onChange={handleChange}
+        />
 
         {formData.image && (
           <div className="mt-4">
@@ -67,15 +118,22 @@ const AddProduct = () => {
           </div>
         )}
 
-<input
-  type="file"
-  id="fileInput"  
-  onChange={(e) => setFormData({ ...formData, image: e.target.files?.[0] || null })}
-/>
+        <input
+          type="file"
+          id="fileInput"  
+          onChange={(e) => setFormData({ ...formData, image: e.target.files?.[0] || null })}
+        />
 
-
-        <button onClick={handleSubmit} className="mt-4 w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
-          Upload and Submit
+        <button
+          onClick={handleSubmit}
+          className="mt-4 w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="spinner-border border-t-4 border-blue-700 w-6 h-6 border-solid border-4 rounded-full animate-spin"></div>
+          ) : (
+            'Upload and Submit'
+          )}
         </button>
       </div>
     </div>

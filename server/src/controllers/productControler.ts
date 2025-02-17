@@ -56,7 +56,7 @@ export const addProduct = async (req: Request, res: Response): Promise<void> => 
 };
 export const getProducts = async (req: Request, res: Response) => {
     try {
-      const products = await ProductModel.find().populate("userId", "name email phoneNumber");
+      const products = await ProductModel.find().populate("userId", "name email phoneNumber address");
       res.json({ ok: true, msg: "Products retrieved", products });
     } catch (error) {
       console.error(error);

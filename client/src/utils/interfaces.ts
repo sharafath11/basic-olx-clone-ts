@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface AuthContextType {
-  registerUser: (name: string, email: string, phoneNumber: string, password: string) => Promise<void>;
+  registerUser: (name: string, email: string, phoneNumber: string, password: string,address:string) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
   user: object | null,
   logoutUser:()=>void
@@ -30,6 +30,7 @@ export interface IProduct {
     name: string;
     email: string;
     phoneNumber: string;
+    address:string
   };
   name: string;
   category: string;

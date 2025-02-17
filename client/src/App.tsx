@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import Loading from "./pages/Loading";
+import Loading from "./components/Loading";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
+import Footer from "./components/Footer";
 
 
 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
+      <Footer/>
     </Suspense>
   );
 }

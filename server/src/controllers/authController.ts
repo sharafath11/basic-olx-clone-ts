@@ -3,7 +3,8 @@ import userModel from "../model/userModel"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 export const registerHandler = async (req: Request, res: Response): Promise<void> => {
-    const { name, email, password, phoneNumber } = req.body;
+    const { name, email, password, phoneNumber, address } = req.body;
+   console.log("add",address)
     try {
         if (await userModel.findOne({ email })) {
             res.json({ ok: false, msg: "User already exists" });
@@ -11,7 +12,7 @@ export const registerHandler = async (req: Request, res: Response): Promise<void
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new userModel({ name, email, phoneNumber, password: hashedPassword });
+        const newUser = new userModel({ name, email, phoneNumber, password: hashedPassword,address });
         await newUser.save();
         res.json({ ok: true, msg: "User registered successfully" });
     } catch (error) {

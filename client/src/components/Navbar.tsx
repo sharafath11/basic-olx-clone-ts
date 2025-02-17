@@ -16,12 +16,16 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const auth = useContext(AuthContext);
   const handleSell = () => {
-    if (localStorage.getItem("token")) {
-      navigate("/AddProduct")
-      return
+    const user = localStorage.getItem("token");
+    console.log("andi user",user)
+    if (!user) {
+      showInfoToast("please login");
+      return 
     }
-    showInfoToast("please login");
-    return
+    navigate("/addProduct")
+    
+   
+   
  }
 
   return (
@@ -174,9 +178,11 @@ const Navbar: React.FC = () => {
                 Favorites <Heart className="h-5 w-5 inline" />
               </button>
 
-              <Link to="/login" className="block text-sm font-semibold text-gray-800 hover:text-gray-600">
+              {auth?.user ? <button onClick={()=>auth.logoutUser()}>Logout</button> : (
+                <Link to="/login" className="block text-sm font-semibold text-gray-800 hover:text-gray-600">
                 Login
               </Link>
+              )}
 
               <Link to={"/AddProduct"} className="relative w-full max-w-[100px] mx-auto" onClick={()=>navigate("/AddProduct")}>
   <img
