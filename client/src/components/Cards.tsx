@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import ProductContext from "../context/ProductContext";
 
 
@@ -40,15 +40,14 @@ function Cards() {
         </div>
       </div>
 
-      {/* Fresh Recommendations Section */}
       <div className="bg-gray-100 p-4 rounded-lg">
         <div className="mb-4">
           <span className="text-2xl text-gray-800">Fresh recommendations</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {/* Card 1 */}
+
           {
-            products?.map((product,index) => {
+            products?.map((product) => {
               return (
                 <div className="flex-none w-56 p-3 bg-white rounded-lg shadow-sm">
                 <div className="flex justify-end">
